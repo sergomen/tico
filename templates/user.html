@@ -1,0 +1,18 @@
+{% extends "base.html" %} 
+
+{% block body %} 
+
+<h4>
+    <strong>
+        Hi, {{ user }} !
+    </strong>
+</h4>
+<hr>
+<!-- <h3>{{message}}</h3> -->
+<form action="{{url_for('put_time')}}" method="post">
+    <input type="text" name="time"><br><br>
+    <input type="submit" value="Внести">
+</form>
+<hr>
+
+{% endblock body %}

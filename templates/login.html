@@ -1,0 +1,18 @@
+{% extends "base.html" %} 
+
+{% block body %} 
+
+<h4>
+    <strong>
+        Login
+    </strong>
+</h4>
+<hr>
+<h3>{{ message }}</h3>
+<form action="{{url_for('handle_data')}}" method="post">
+    <input type="text" name="nickname"><br><br>
+    <input type="submit" value="Войти">
+</form>
+<hr>
+
+{% endblock body %}
