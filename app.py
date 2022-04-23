@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, url_for, make_response
 
-import gspread
+import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from datetime import datetime
@@ -13,9 +13,11 @@ dic = {'Серый Гусь': 'B','Елена': 'C','Varvara': 'D','Balveda': 'E
 current_col = ""
 current_row = ""
 cur_col = ""
+basepath = os.path.abspath(".")
+print(basepath)
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-SERVICE_ACCOUNT_FILE = 'service_account.json'
+SERVICE_ACCOUNT_FILE = basepath + '/' + 'service_account.json'
 
 SPREADSHEET_ID = '1d85RZSO8zi9U_PdlgQgxL3dQGwRt13GtHno-whBIeSs'
 creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
@@ -81,8 +83,8 @@ def logout():
     return redirect(url_for("login"))
     
 def set_session(cur_col):
-    session["cul_col"] = cur_col
-    return redirect(url_for("cur_col"))
+    session["cur_col"] = cur_col
+    return f"<h1>{cur_col}</h1" #redirect(url_for("cur_col"))
 
 @app.route("/cur_col")
 def cur_col():
@@ -98,7 +100,8 @@ def handle_data():
     global cur_col
     if "user" in session:
         user = session["user"]
-        # current_col = session["cur_col"]
+        # current_col = request.cookies.get('userCol')
+        current_col = session["cur_col"]
         print("Я уже тут" + str(cur_col))
         print("Мой лимузин равен" + str(current_col))
     else:
@@ -106,17 +109,13 @@ def handle_data():
         # get user column for making an address for current cell
         current_col = dic.get(user)
         cur_col = current_col
+        # setcookie(cur_col)
         set_session(cur_col)
         print("Я только вошел" + str(cur_col))
         # print(request.cookies.get('UserColumn'))
         # print(session["cul_col"])
     log(user)
     print(current_col)
-    # print(current_col)
-    # for username in values:
-    #     # print(user)
-    #     print(str(username))
-    # print(values[0][1])
     for i in range(len(values)):
         for j in range(len(values[i])):
             if user == str(values[i][j]):

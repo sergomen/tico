@@ -1,0 +1,8 @@
+{% block body %}
+
+<form action="{{url_for('getcookie')}}" method="get">
+    <input type="text" name="nickname"><br><br>
+    <input type="submit" value="Войти">
+</form>
+
+{% endblock %}
