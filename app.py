@@ -1,9 +1,12 @@
+from sqlite3 import Row
 from flask import Flask, render_template, request, redirect, session, url_for, make_response
 
 import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from datetime import datetime
+import json
+
 
 
 
@@ -15,6 +18,7 @@ current_row = ""
 cur_col = ""
 basepath = os.path.abspath(".")
 print(basepath)
+
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SERVICE_ACCOUNT_FILE = basepath + '/' + 'service_account.json'
@@ -30,14 +34,16 @@ dateTable = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!A13
 
 result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!B1:W1").execute()
 
-dateTableValues = dateTable.get('values',[])
+
+dateTableDay = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!A109:A142").execute()
+dateTableDayValues = dateTableDay.get('values',[])
+print(dateTableDayValues)
+
 values = result.get('values',[])
+dateTableValues = dateTable.get('values',[])
 # Format datetime like "01/01/22"
 date = datetime.now()
 current_date = date.strftime("%d/%m/%y")
-
-print(values)
-print(dateTableValues)
 
 
 # sa = gspread.service_account()
@@ -80,6 +86,7 @@ def user():
 @app.route("/logout")
 def logout():
     session.pop("user", None)
+    session.pop("cur_col", None)
     return redirect(url_for("login"))
     
 def set_session(cur_col):
@@ -98,6 +105,11 @@ def cur_col():
 def handle_data():
     global current_col
     global cur_col
+    global current_date
+
+    date = datetime.now()
+    current_date = date.strftime("%d/%m/%y") #временно!
+
     if "user" in session:
         user = session["user"]
         # current_col = request.cookies.get('userCol')
@@ -131,6 +143,7 @@ def handle_data():
 @app.route('/put/', methods=['POST'])
 def put_time():
     global current_row
+    
     # print("Текущая дата" + current_date)
     for i in range(len(dateTableValues)):
         
@@ -139,19 +152,10 @@ def put_time():
             if str(current_date) == str(dateTableValues[i][0]):
                 print(current_date)
                 print(dateTableValues)
-                current_row = i + 131
-                # resp2 = make_response(render_template('login.html'))
-                # resp2.set_cookie('UserRow', cur_row)
+                current_row = i + 131 #sheet.getRange("").getRowIndex() #i + 131
                 print(current_row)
                 print("совпадение!")
                 continue
-                # return render_template('user.html', user=user) #"Hi, {}".format(user)
-            #else: #print("Error") #message = "Такого имени нет."
-    # return render_template('login.html', message=message)
-    # current_col = dic.get(user)
-    # cur_row = request.cookies.get('UserRow')
-    # current_row = cur_row
-    #print('Столбец ' + str(current_col))
     address = "Everyday" + "!" + str(current_col) + str(current_row)
     #print(address)
     #address_format = '"{}"'.format(address)
@@ -165,3 +169,140 @@ def put_time():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+@app.route('/dashboard')
+def dashboard():
+    # list = [2022, 20000, 10000]
+    # list = read_data()
+    # global dateTableDay, dateTableMonth
+    
+    dateTableDayValues = dateTableDay.get('values',[])
+    print("МАКАКАКА")
+    print(dateTableDayValues)
+
+    list = gather_data() #read_data()
+    # name_from_list = []
+    # time_from_list = []
+    # for i in range(len(list)):
+    #     print(len(list))
+    #     name_from_list.append(list[i][0])
+    #     time_from_list.append(list[i][1])
+    # # list = ['Серый Гусь', 1000, 1000]
+    # print(name_from_list)
+    # print(time_from_list)
+    # print(zip(name_from_list, time_from_list))
+    return render_template('dashboard.html', list=list)#names_times=zip(name_from_list, time_from_list))#json.dumps(list2))
+    # return "Hi"
+
+def gather_data():
+    structure = []
+    # var_list = [[]]
+    col_from = 109
+    col_to = 142
+    
+    for key in dic:
+        var_list = [[]]
+        i = 0
+        row = dic[key]
+        var_range = "Everyday!" + str(row) + str(col_from) +  ":" + str(row) + str(col_to)#A109:A142" 
+        print(var_range)
+        if read_data(var_range) == []:
+            print("")
+        else:
+            var_list[i].append(key)
+            var_list[i].append(read_data(var_range))
+            print(var_list[i])
+            structure.append(var_list[i])
+            i+=1
+    print("СТРУКТУРА!")
+    print(structure)   
+    return structure
+
+@app.route('/readdata')
+def read_data(var_range):
+    # for i in range(len(dateTableValues)):
+    #     print("Chupakabr-rrrra")
+    #     print(len(dateTableValues))
+        
+    #         # print("Текущая дата" + current_date)
+    #     print(str(dateTableValues[i][0]))
+    #     if str(current_date) == str(dateTableValues[i][0]):
+    #         print(current_date)
+    #         print(dateTableValues)
+    #         current_row = i + 131
+    #         print(current_row)
+    #         print("совпадение!")
+    #         continue
+    # address = "Everyday" + "!" + str(current_col) + str(current_row)
+    
+    # dateTable -> [i][0]
+    # dateTableDay = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!A109:A142").execute()
+    dateTableMonth = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=var_range).execute() #"Everyday!B109:B142"
+
+    # dateTableDayValues = dateTableDay.get('values',[])
+    dateTableMonthValues = dateTableMonth.get('values',[])
+
+    #convert values into dataframe
+    # df = pd.DataFrame(dateTableMonthValues)
+
+#replace all non trailing blank values created by Google Sheets API
+#with null values
+    # df_replace = df.replace([''], [None])
+
+#convert back to list to insert into Redshift
+    # processed_dataset = df_replace.values.tolist()
+    # print(processed_dataset)
+    print(dateTableMonthValues)
+    print("Предподготовка")
+    print(dateTableMonthValues)
+    for i in range(len(dateTableDayValues)):
+        print(len(dateTableMonthValues))
+        week = dateTableDayValues[i][0]
+        # print(dateTableDayValues[i][0])
+        if week[3] == 'н':
+            print('н')
+            # del dateTableMonthValues[]
+            # print(str(dateTableMonthValues[i][0])) #ошибкаНатали
+            dateTableMonthValues[i] = []
+            # dateTableMonthValues.pop(i)
+    print("Проверка")
+    print(dateTableMonthValues)
+    # lst = dateTableMonthValues
+    # print(dateTableMonthValues[2][0])
+    i = 0
+    while i < len(dateTableMonthValues):
+        print(len(dateTableMonthValues))
+        if dateTableMonthValues[i] == []:
+            print("Найдено!")
+            dateTableMonthValues.pop(i)
+        elif dateTableMonthValues[i] == [" "]:
+            dateTableMonthValues.pop(i)
+            print("Пробел удален!")
+        else:
+            i+=1
+    # for i in range(len(dateTableMonthValues)):       
+    #      if dateTableMonthValues[i] == []:
+    #         #  del dateTableMonthValues[i][0]
+    #          dateTableMonthValues.pop(i)
+    print("Proverka2")
+    print (dateTableMonthValues)
+    sum_v = 0
+    for i in range(len(dateTableMonthValues)):
+        t = 0 
+        for u in dateTableMonthValues[i][0].split(':'):
+                      
+            t = 60 * t + int(u)           
+        sum_v = sum_v + t  
+        print(t)     
+    print(sum_v)
+
+    hours = sum_v // 60
+    print(hours)
+    minutes = sum_v % 60
+    sum_f = "{}:{}".format(hours, minutes)
+    print(sum)
+    if sum_v != 0:
+        list = [sum_v, sum_f]
+    else: 
+        list = []
+    return list
