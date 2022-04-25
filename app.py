@@ -29,17 +29,16 @@ creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FI
 # client = gspread.authorize(creds)
 service = build('sheets', 'v4', credentials=creds)
 sheet = service.spreadsheets()
-
+# dateTable - keeps information of "Days" for table 2022
 dateTable = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!A131:A423").execute()
-
-result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!B1:W1").execute()
-
-
+# userTableRow - keeps information about all active users
+userTableRow = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!B1:W1").execute()
+# dateTableDay - keeps information of days for April 2022
 dateTableDay = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!A109:A142").execute()
 dateTableDayValues = dateTableDay.get('values',[])
-print(dateTableDayValues)
 
-values = result.get('values',[])
+
+values = userTableRow.get('values',[])
 dateTableValues = dateTable.get('values',[])
 # Format datetime like "01/01/22"
 date = datetime.now()
@@ -174,48 +173,31 @@ def page_not_found(e):
 def dashboard():
     # list = [2022, 20000, 10000]
     # list = read_data()
-    # global dateTableDay, dateTableMonth
-    
-    dateTableDayValues = dateTableDay.get('values',[])
-    print("МАКАКАКА")
-    print(dateTableDayValues)
-
     list = gather_data() #read_data()
-    # name_from_list = []
-    # time_from_list = []
-    # for i in range(len(list)):
-    #     print(len(list))
-    #     name_from_list.append(list[i][0])
-    #     time_from_list.append(list[i][1])
-    # # list = ['Серый Гусь', 1000, 1000]
-    # print(name_from_list)
-    # print(time_from_list)
-    # print(zip(name_from_list, time_from_list))
     return render_template('dashboard.html', list=list)#names_times=zip(name_from_list, time_from_list))#json.dumps(list2))
-    # return "Hi"
 
 def gather_data():
     structure = []
-    # var_list = [[]]
+    # Define col_from and col_to MANUALLY - APRIL.
     col_from = 109
     col_to = 142
     
     for key in dic:
-        var_list = [[]]
+        userTimelist = [[]]
         i = 0
         row = dic[key]
-        var_range = "Everyday!" + str(row) + str(col_from) +  ":" + str(row) + str(col_to)#A109:A142" 
-        print(var_range)
-        if read_data(var_range) == []:
-            print("")
+        monthUser_range = "Everyday!" + str(row) + str(col_from) +  ":" + str(row) + str(col_to) #A109:A142, B109:B142, C109:C142, ...
+        read_data_list = read_data(monthUser_range)
+        if read_data_list == []:
+            pass
         else:
-            var_list[i].append(key)
-            var_list[i].append(read_data(var_range))
-            print(var_list[i])
-            structure.append(var_list[i])
+            userTimelist[i].append(key)
+            userTimelist[i].append(read_data_list)
+            print(userTimelist[i])
+            structure.append(userTimelist[i])
             i+=1
-    print("СТРУКТУРА!")
-    print(structure)   
+    # print("СТРУКТУРА!")
+    # print(structure)   
     return structure
 
 @app.route('/readdata')
@@ -265,27 +247,16 @@ def read_data(var_range):
             # print(str(dateTableMonthValues[i][0])) #ошибкаНатали
             dateTableMonthValues[i] = []
             # dateTableMonthValues.pop(i)
-    print("Проверка")
-    print(dateTableMonthValues)
-    # lst = dateTableMonthValues
-    # print(dateTableMonthValues[2][0])
     i = 0
+    # Deleting from dateTableMonthValues elements [] and [" "] for define the SUM of it elements
     while i < len(dateTableMonthValues):
-        print(len(dateTableMonthValues))
         if dateTableMonthValues[i] == []:
-            print("Найдено!")
             dateTableMonthValues.pop(i)
         elif dateTableMonthValues[i] == [" "]:
             dateTableMonthValues.pop(i)
-            print("Пробел удален!")
         else:
             i+=1
-    # for i in range(len(dateTableMonthValues)):       
-    #      if dateTableMonthValues[i] == []:
-    #         #  del dateTableMonthValues[i][0]
-    #          dateTableMonthValues.pop(i)
-    print("Proverka2")
-    print (dateTableMonthValues)
+    
     sum_v = 0
     for i in range(len(dateTableMonthValues)):
         t = 0 
