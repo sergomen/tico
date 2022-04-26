@@ -90,7 +90,7 @@ def logout():
     
 def set_session(cur_col):
     session["cur_col"] = cur_col
-    return f"<h1>{cur_col}</h1" #redirect(url_for("cur_col"))
+    return f"<h1>{cur_col}</h1"
 
 @app.route("/cur_col")
 def cur_col():
@@ -107,11 +107,10 @@ def handle_data():
     global current_date
 
     date = datetime.now()
-    current_date = date.strftime("%d/%m/%y") #временно!
+    current_date = date.strftime("%d/%m/%y") #из-за сессии теряется адрес на следующей день
 
     if "user" in session:
         user = session["user"]
-        # current_col = request.cookies.get('userCol')
         current_col = session["cur_col"]
         print("Я уже тут" + str(cur_col))
         print("Мой лимузин равен" + str(current_col))
@@ -122,9 +121,6 @@ def handle_data():
         cur_col = current_col
         # setcookie(cur_col)
         set_session(cur_col)
-        print("Я только вошел" + str(cur_col))
-        # print(request.cookies.get('UserColumn'))
-        # print(session["cul_col"])
     log(user)
     print(current_col)
     for i in range(len(values)):
@@ -142,18 +138,10 @@ def handle_data():
 @app.route('/put/', methods=['POST'])
 def put_time():
     global current_row
-    
-    # print("Текущая дата" + current_date)
+
     for i in range(len(dateTableValues)):
-        
-            # print("Текущая дата" + current_date)
-            print(str(dateTableValues[i][0]))
             if str(current_date) == str(dateTableValues[i][0]):
-                print(current_date)
-                print(dateTableValues)
                 current_row = i + 131 #sheet.getRange("").getRowIndex() #i + 131
-                print(current_row)
-                print("совпадение!")
                 continue
     address = "Everyday" + "!" + str(current_col) + str(current_row)
     #print(address)
@@ -161,7 +149,7 @@ def put_time():
     #print(address_format)
     time_data = request.form['time']
     time_value = [[time_data]]
-    # sheet.update_cell(131, 2, "time_data")
+    
     sheet.values().update(spreadsheetId=SPREADSHEET_ID, range=address, valueInputOption="USER_ENTERED", body={"values":time_value}).execute()
     return "Вы внесли, {}".format(time_data)
 
@@ -203,9 +191,7 @@ def gather_data():
 @app.route('/readdata')
 def read_data(var_range):
     # for i in range(len(dateTableValues)):
-    #     print("Chupakabr-rrrra")
-    #     print(len(dateTableValues))
-        
+    #     print(len(dateTableValues))        
     #         # print("Текущая дата" + current_date)
     #     print(str(dateTableValues[i][0]))
     #     if str(current_date) == str(dateTableValues[i][0]):
@@ -223,30 +209,16 @@ def read_data(var_range):
 
     # dateTableDayValues = dateTableDay.get('values',[])
     dateTableMonthValues = dateTableMonth.get('values',[])
-
-    #convert values into dataframe
-    # df = pd.DataFrame(dateTableMonthValues)
-
-#replace all non trailing blank values created by Google Sheets API
-#with null values
-    # df_replace = df.replace([''], [None])
-
-#convert back to list to insert into Redshift
-    # processed_dataset = df_replace.values.tolist()
-    # print(processed_dataset)
-    print(dateTableMonthValues)
     print("Предподготовка")
-    print(dateTableMonthValues)
+    # print(dateTableMonthValues)
     for i in range(len(dateTableDayValues)):
-        print(len(dateTableMonthValues))
         week = dateTableDayValues[i][0]
         # print(dateTableDayValues[i][0])
         if week[3] == 'н':
-            print('н')
-            # del dateTableMonthValues[]
-            # print(str(dateTableMonthValues[i][0])) #ошибкаНатали
-            dateTableMonthValues[i] = []
-            # dateTableMonthValues.pop(i)
+            try:
+                dateTableMonthValues[i] = [] #ошибкаNusya
+            except ValueError:
+                print("Error" + i)
     i = 0
     # Deleting from dateTableMonthValues elements [] and [" "] for define the SUM of it elements
     while i < len(dateTableMonthValues):
@@ -264,14 +236,12 @@ def read_data(var_range):
                       
             t = 60 * t + int(u)           
         sum_v = sum_v + t  
-        print(t)     
+            
     print(sum_v)
 
     hours = sum_v // 60
-    print(hours)
     minutes = sum_v % 60
     sum_f = "{}:{}".format(hours, minutes)
-    print(sum)
     if sum_v != 0:
         list = [sum_v, sum_f]
     else: 
