@@ -112,8 +112,8 @@ def handle_data():
     if "user" in session:
         user = session["user"]
         current_col = session["cur_col"]
-        print("Я уже тут" + str(cur_col))
-        print("Мой лимузин равен" + str(current_col))
+        #print("Я уже тут" + str(cur_col))
+        #print("Мой лимузин равен" + str(current_col))
     else:
         user = request.form['nickname']
         # get user column for making an address for current cell
@@ -151,7 +151,7 @@ def put_time():
     time_value = [[time_data]]
     
     sheet.values().update(spreadsheetId=SPREADSHEET_ID, range=address, valueInputOption="USER_ENTERED", body={"values":time_value}).execute()
-    return "Вы внесли, {}".format(time_data)
+    return render_template('put.html', message_put="Вы внесли, {}".format(time_data))
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -159,10 +159,13 @@ def page_not_found(e):
 
 @app.route('/dashboard')
 def dashboard():
-    # list = [2022, 20000, 10000]
-    # list = read_data()
-    list = gather_data() #read_data()
-    return render_template('dashboard.html', list=list)#names_times=zip(name_from_list, time_from_list))#json.dumps(list2))
+    if "user" in session:
+        # list = [2022, 20000, 10000]
+        # list = read_data()
+        list = gather_data() #read_data()
+        return render_template('dashboard.html', list=list)#names_times=zip(name_from_list, time_from_list))#json.dumps(list2))
+    else:
+        return render_template('login.html', message="You're not authorized") 
 
 def gather_data():
     structure = []

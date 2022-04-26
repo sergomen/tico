@@ -2,11 +2,18 @@
 
 {% block body %} 
 
-<h4>
-    <strong>
-        Hi, {{ user }} !
-    </strong>
-</h4>
+<table>
+    <tr>
+        <td>
+            <h4>
+                <strong>
+                    Hi, {{ user }} !
+                </strong>
+            </h4>
+        </td>
+        <td class="topnav"><a href="{{url_for('dashboard')}}"><h4>Команда месяца</h4></a></td>
+    </tr>
+</table>
 <hr>
 <!-- <h3>{{message}}</h3> -->
 <form action="{{url_for('put_time')}}" method="post">

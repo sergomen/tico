@@ -1,0 +1,19 @@
+{% extends "base.html" %} 
+
+{% block body %} 
+
+<table>
+    <tr>
+        <td>
+            <h4>
+                <strong>
+                    {{message_put}}
+                </strong>
+            </h4>
+        </td>
+        <td class="topnav"><a href="{{url_for('handle_data')}}"><h4>Вернуться</h4></a></td>
+    </tr>
+</table>
+<hr>
+
+{% endblock body %}
