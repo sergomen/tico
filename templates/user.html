@@ -17,8 +17,13 @@
 <hr>
 <!-- <h3>{{message}}</h3> -->
 <form action="{{url_for('put_time')}}" method="post">
-    <input type="text" name="time"><br><br>
+    {{current_date}} 
+    <br><br>
+    <input type="text" name="time">
+    <br><br>
+    
     <input type="submit" value="Внести">
+    
 </form>
 <hr>
 

@@ -8,17 +8,26 @@ from datetime import datetime
 import json
 
 
-
+# ___ MANUALLLY ___
+#
+#
 
 dic = {'Серый Гусь': 'B','Елена': 'C','Varvara': 'D','Balveda': 'E', 'Extranjerita': 'F', 'Алина': 'G', 'Натали': 'H', 'ARTishok': 'I', 'Аня Лу': 'J',
 'Света': 'K', 'The Illuminati Prince': 'L', 'RieBi': 'O', 'Nusya': 'P', 'Transcendence': 'Q', 'Вадим': 'R', 'Salyonaya': 'S', 'Daria': 'T', 'Роман':'U', 'Wonder Woman': 'V', 'Диля Зияхан': 'W'}
 
+# APRIL
+col_from = 109
+col_to = 142
+YEAR_RANGE = "Everyday!A131:A423" #IT'S NOT YEAR, BUT THE BEGINNING
+USER_RANGE = "Everyday!B1:W1"
+MONTH_RANGE = "Everyday!A109:A142"
+#
+#
+# ___ END_MANUALLY ___
 current_col = ""
 current_row = ""
 cur_col = ""
 basepath = os.path.abspath(".")
-print(basepath)
-
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SERVICE_ACCOUNT_FILE = basepath + '/' + 'service_account.json'
@@ -30,11 +39,11 @@ creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FI
 service = build('sheets', 'v4', credentials=creds)
 sheet = service.spreadsheets()
 # dateTable - keeps information of "Days" for table 2022
-dateTable = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!A131:A423").execute()
+dateTable = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=YEAR_RANGE).execute()
 # userTableRow - keeps information about all active users
-userTableRow = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!B1:W1").execute()
+userTableRow = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=USER_RANGE).execute()
 # dateTableDay - keeps information of days for April 2022
-dateTableDay = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!A109:A142").execute()
+dateTableDay = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=MONTH_RANGE).execute()
 dateTableDayValues = dateTableDay.get('values',[])
 
 
@@ -59,14 +68,14 @@ app.secret_key = "hello"
 @app.route('/')
 def index():
     if "user" in session:
-        user = session["user"]
+        # user = session["user"]
         return redirect(url_for('handle_data'))
     else: return render_template('login.html')
 
 @app.route('/login/', methods = ['GET', 'POST'])
 def login():
     if "user" in session:
-        user = session["user"]
+        # user = session["user"]
         return redirect(url_for('handle_data'))
     else: return render_template('login.html')
 
@@ -121,12 +130,12 @@ def handle_data():
         cur_col = current_col
         # setcookie(cur_col)
         set_session(cur_col)
-    log(user)
-    print(current_col)
+        log(user)
+    
     for i in range(len(values)):
         for j in range(len(values[i])):
             if user == str(values[i][j]):
-                return render_template('user.html', user=user) #"Hi, {}".format(user)
+                return render_template('user.html', user=user, current_date=current_date) #"Hi, {}".format(user)
             else:
                 message = "К сожалению, такого пользователя нет"
                 session.pop("user", None)
@@ -170,8 +179,6 @@ def dashboard():
 def gather_data():
     structure = []
     # Define col_from and col_to MANUALLY - APRIL.
-    col_from = 109
-    col_to = 142
     
     for key in dic:
         userTimelist = [[]]
@@ -212,7 +219,7 @@ def read_data(var_range):
 
     # dateTableDayValues = dateTableDay.get('values',[])
     dateTableMonthValues = dateTableMonth.get('values',[])
-    print("Предподготовка")
+    # print("Предподготовка")
     # print(dateTableMonthValues)
     for i in range(len(dateTableDayValues)):
         week = dateTableDayValues[i][0]
@@ -238,9 +245,7 @@ def read_data(var_range):
         for u in dateTableMonthValues[i][0].split(':'):
                       
             t = 60 * t + int(u)           
-        sum_v = sum_v + t  
-            
-    print(sum_v)
+        sum_v = sum_v + t
 
     hours = sum_v // 60
     minutes = sum_v % 60
