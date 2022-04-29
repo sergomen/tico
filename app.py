@@ -186,6 +186,7 @@ def gather_data():
         row = dic[key]
         monthUser_range = "Everyday!" + str(row) + str(col_from) +  ":" + str(row) + str(col_to) #A109:A142, B109:B142, C109:C142, ...
         read_data_list = read_data(monthUser_range)
+        # Passing inactive users
         if read_data_list == []:
             pass
         else:
@@ -215,8 +216,8 @@ def read_data(var_range):
     
     # dateTable -> [i][0]
     # dateTableDay = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!A109:A142").execute()
+    # print(var_range)
     dateTableMonth = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=var_range).execute() #"Everyday!B109:B142"
-
     # dateTableDayValues = dateTableDay.get('values',[])
     dateTableMonthValues = dateTableMonth.get('values',[])
     # print("Предподготовка")
@@ -242,8 +243,7 @@ def read_data(var_range):
     sum_v = 0
     for i in range(len(dateTableMonthValues)):
         t = 0 
-        for u in dateTableMonthValues[i][0].split(':'):
-                      
+        for u in dateTableMonthValues[i][0].split(':'):         
             t = 60 * t + int(u)           
         sum_v = sum_v + t
 

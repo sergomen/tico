@@ -1,8 +1,10 @@
+
 <!DOCTYPE html>
 <html>
  <head>
   <meta charset="utf-8">
   <title>Гистограмма</title>
+  <link rel="stylesheet" href="/static/main.css">
   <script src="https://www.google.com/jsapi"></script>
   <script>
     
@@ -32,15 +34,61 @@
         ticks: [{ v: 720, f: '12:00' }, { v: 1440, f: '24:00' }, { v: 2160, f: '36:00' }, { v: 2880, f: '48:00' }, { v: 3600, f: '60:00'}, { v: 4320, f: '72:00'}, { v: 5040, f: '84:00'}, { v: 5760, f: '96:00'}, { v: 6480, f: '108:00'}, { v: 7200, f: '120:00'}, { v: 7920, f: '132:00'}]
     }
     };
-    
-    
+      
     var chart = new google.visualization.ColumnChart(document.getElementById('oil'));
     chart.draw(data, options);
+   }
+
+   <!-- -->
+
+   google.load("visualization", "1", {packages:["corechart"]});
+   google.setOnLoadCallback(drawChart2);
+   function drawChart2() {
+    var data = google.visualization.arrayToDataTable([
+     ['Газ', 'Объём'],
+     ['Азот',     78.09],
+     ['Кислород', 20.95],
+     ['Аргон',    0.93],
+     ['Углекислый газ', 0.03]
+    ]);
+    var options = {
+     title: 'Состав воздуха',
+     is3D: true,
+     pieResidueSliceLabel: 'Остальное'
+    };
+    var chart = new google.visualization.PieChart(document.getElementById('air'));
+     chart.draw(data, options);
+   }
+
+   <!--   -->
+
+   google.load("visualization", "1", {packages:["corechart"]});
+   google.setOnLoadCallback(drawChart3);
+   function drawChart3() {
+    var data = google.visualization.arrayToDataTable([
+     ['Газ', 'Объём'],
+     ['Азот',     78.09],
+     ['Кислород', 20.95],
+     ['Аргон',    0.93],
+     ['Углекислый газ', 0.03]
+    ]);
+    var options = {
+     title: 'Состав воздуха',
+     is3D: true,
+     pieResidueSliceLabel: 'Остальное'
+    };
+    var chart = new google.visualization.PieChart(document.getElementById('air2'));
+     chart.draw(data, options);
    }
   </script>
  </head>
  <body>
   <h4>{{message}}</h4>
   <div id="oil" style="width: 500px; height: 400px;"></div>
+  <div style="width: 1000px; height: 800px;">
+  <div id="air" style="width: 500px; height: 400px;"></div>
+  <div class="pie" id="air2"  style="width: 500px; height: 400px;"></div>
+  </div>
+  
  </body>
  </html>
