@@ -25,7 +25,7 @@
     {% endfor %}
    
     var options = {
-     title: 'Time',
+     title: 'Текущий месяц',
      hAxis: {title: ''},
      vAxis: {title: 'H:Min'},
      width: 1080,
@@ -41,20 +41,24 @@
 
    <!-- -->
 
-   google.load("visualization", "1", {packages:["corechart"]});
+   google.load("visualization", "2", {packages:["corechart"]});
    google.setOnLoadCallback(drawChart2);
    function drawChart2() {
     var data = google.visualization.arrayToDataTable([
-     ['Газ', 'Объём'],
-     ['Азот',     78.09],
-     ['Кислород', 20.95],
-     ['Аргон',    0.93],
-     ['Углекислый газ', 0.03]
+     ['User', 'Min'],
+     ['', 0],
     ]);
+
+    {% for i in range(list2|length) %}
+        data.addRow(
+            ['{{list2[i][0]}}', {{list2[i][1]}}]
+            );
+    {% endfor %}
+
     var options = {
-     title: 'Состав воздуха',
-     is3D: true,
-     pieResidueSliceLabel: 'Остальное'
+     title: 'Вклад участника',
+     is3D: false,
+     pieResidueSliceLabel: 'Остальное',
     };
     var chart = new google.visualization.PieChart(document.getElementById('air'));
      chart.draw(data, options);
@@ -66,15 +70,16 @@
    google.setOnLoadCallback(drawChart3);
    function drawChart3() {
     var data = google.visualization.arrayToDataTable([
-     ['Газ', 'Объём'],
-     ['Азот',     78.09],
-     ['Кислород', 20.95],
-     ['Аргон',    0.93],
-     ['Углекислый газ', 0.03]
+     ['Time', 'Min'],
+     ['Пройдено',     {{current_sum}}],
+     ['Осталось', 10000*60-{{current_sum}}],
+     
     ]);
+
     var options = {
-     title: 'Состав воздуха',
+     title: 'Цель 10.000 часов',
      is3D: true,
+     colors: ['#007FFF', '#FF5349'],
      pieResidueSliceLabel: 'Остальное'
     };
     var chart = new google.visualization.PieChart(document.getElementById('air2'));

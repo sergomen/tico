@@ -1,11 +1,12 @@
 from sqlite3 import Row
-from flask import Flask, render_template, request, redirect, session, url_for, make_response
+from subprocess import list2cmdline
+from flask import Flask, render_template, request, redirect, session, url_for
 
 import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from datetime import datetime
-import json
+
 
 
 # ___ MANUALLLY ___
@@ -172,7 +173,10 @@ def dashboard():
         # list = [2022, 20000, 10000]
         # list = read_data()
         list = gather_data() #read_data()
-        return render_template('dashboard.html', list=list)#names_times=zip(name_from_list, time_from_list))#json.dumps(list2))
+        list2 = read_user_sum()
+        cur_sum = current_sum()
+        #list2 = gather_data2()
+        return render_template('dashboard.html', list=list, list2=list2, current_sum=cur_sum)#names_times=zip(name_from_list, time_from_list))#json.dumps(list2))
     else:
         return render_template('login.html', message="You're not authorized") 
 
@@ -198,6 +202,62 @@ def gather_data():
     # print("СТРУКТУРА!")
     # print(structure)   
     return structure
+
+#@app.route('/test')
+def read_user_sum():
+    list2 = []
+    dateTableUserSum = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!B4:W4").execute()
+    dateTableUserSumValues = dateTableUserSum.get('values',[])
+
+    count = 0
+    for element in dateTableUserSumValues:
+        count += len(element)
+    
+    # print(count)
+    i = 0
+    for key in dic:
+        sum_v = 0
+        t = 0 
+        
+        if dateTableUserSumValues[0][i] == "":
+            pass
+        else:
+            for u in dateTableUserSumValues[0][i].split(':'):
+                # print(u)      
+                t = 60 * t + int(u)
+                sum_v = sum_v + t
+        i += 1          
+        
+        list2.extend([[key, sum_v]])
+    print(list2)
+    # for key in dic:
+    #         list3.extend([key])    
+    # hours = sum_v // 60
+    # minutes = sum_v % 60
+    # sum_f = "{}:{}".format(hours, minutes)
+    # if sum_v != 0:
+    #     list = [sum_v, sum_f]
+        
+    # else: 
+    #     list = []
+
+    # list4 = [list3, list2]
+    # print(list4)
+    return list2
+
+def current_sum():
+    current_sum = 0
+    t = 0
+    sum_v = 0
+    dateTableAllUserSum = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!A4").execute()
+    dateTableAllUserSumValues = dateTableAllUserSum.get('values',[])
+    # print(dateTableAllUserSumValues)
+    for u in dateTableAllUserSumValues[0][0].split(':'):    
+        t = 60 * t + int(u)
+        sum_v = sum_v + t
+    current_sum = sum_v
+    # print(current_sum)
+    return current_sum
 
 @app.route('/readdata')
 def read_data(var_range):
