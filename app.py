@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, session, url_for
 import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 
@@ -17,11 +17,11 @@ dic = {'Серый Гусь': 'B','Елена': 'C','Varvara': 'D','Balveda': 'E
 'Света': 'K', 'The Illuminati Prince': 'L', 'RieBi': 'O', 'Nusya': 'P', 'Transcendence': 'Q', 'Вадим': 'R', 'Salyonaya': 'S', 'Daria': 'T', 'Роман':'U', 'Wonder Woman': 'V', 'Диля Зияхан': 'W'}
 
 # APRIL
-col_from = 109
-col_to = 142
+col_from = 143
+col_to = 178
 YEAR_RANGE = "Everyday!A131:A423" #IT'S NOT YEAR, BUT THE BEGINNING
 USER_RANGE = "Everyday!B1:W1"
-MONTH_RANGE = "Everyday!A109:A142"
+MONTH_RANGE = "Everyday!A143:A178"
 #
 #
 # ___ END_MANUALLY ___
@@ -182,6 +182,7 @@ def dashboard():
 
 def gather_data():
     structure = []
+
     # Define col_from and col_to MANUALLY - APRIL.
     
     for key in dic:
@@ -196,12 +197,32 @@ def gather_data():
         else:
             userTimelist[i].append(key)
             userTimelist[i].append(read_data_list)
+            userTimelist[i].append(yesterday_time(dic[key]))
             print(userTimelist[i])
-            structure.append(userTimelist[i])
+            structure.append(userTimelist[i])         
             i+=1
     # print("СТРУКТУРА!")
-    # print(structure)   
+    print(structure)   
     return structure
+
+def yesterday_time(activeUser):
+    yesterday = datetime.now() - timedelta(days=1)
+    yesterday = yesterday.strftime("%d/%m/%y")
+
+    for i in range(len(dateTableValues)):
+            if str(yesterday) == str(dateTableValues[i][0]):
+                yesterday_row = i + 131 #sheet.getRange("").getRowIndex() #i + 131
+                continue
+    var_range = "Everyday!" + str(activeUser) + str(yesterday_row)
+    dateTableYesterday = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=var_range).execute() 
+    dateTableYesterdayValue = dateTableYesterday.get('values',[])
+    # Check [] -> if user didn't put time yesterday
+    print(dateTableYesterdayValue)
+    if dateTableYesterdayValue == []:
+        yesterday_time = "0:00"
+    else:
+        yesterday_time = dateTableYesterdayValue[0][0]
+    return yesterday_time
 
 #@app.route('/test')
 def read_user_sum():

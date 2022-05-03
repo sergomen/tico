@@ -13,14 +13,14 @@
    google.setOnLoadCallback(drawChart);
    function drawChart() {
     var data = google.visualization.arrayToDataTable([
-     ['', 'April'],
+     ['', 'Май'],
      ['', 0]
    ]);
     
     {% for i in range(list|length) %}
         data.addRow(
             ['{{list[i][0]}}',
-            { v: {{list[i][1][0]}}, f: '{{list[i][1][1]}}' }]
+            { v: {{list[i][1][0]}}, f: '{{list[i][1][1]}}' + '\n' + 'Вчера: +{{list[i][2]}}' }]
             );
     {% endfor %}
    
