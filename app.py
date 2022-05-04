@@ -195,14 +195,14 @@ def gather_data():
         if read_data_list == []:
             pass
         else:
-            userTimelist[i].append(key)
-            userTimelist[i].append(read_data_list)
-            userTimelist[i].append(yesterday_time(dic[key]))
+            userTimelist[i].append(key) # ['Серый Гусь']
+            userTimelist[i].append(read_data_list) # ['Серый Гусь', [2:30, '2:30']]
+            userTimelist[i].append(yesterday_time(dic[key])) # # ['Серый Гусь', [2:30, '2:30'], '1:00']
             print(userTimelist[i])
             structure.append(userTimelist[i])         
             i+=1
     # print("СТРУКТУРА!")
-    print(structure)   
+    # print(structure)   
     return structure
 
 def yesterday_time(activeUser):
