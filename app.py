@@ -215,7 +215,7 @@ def sort(structure:list) -> list:
                 structure[j][0], structure[j+1][0] = structure[j+1][0], structure[j][0]
                 structure[j][1][0], structure[j+1][1][0] = structure[j+1][1][0], structure[j][1][0]
                 structure[j][1][1], structure[j+1][1][1] = structure[j+1][1][1], structure[j][1][1]
-
+                structure[j][2], structure[j+1][2] = structure[j+1][2], structure[j][2]
             
     return structure
 
