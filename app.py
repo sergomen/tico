@@ -197,13 +197,28 @@ def gather_data():
         else:
             userTimelist[i].append(key) # ['Серый Гусь']
             userTimelist[i].append(read_data_list) # ['Серый Гусь', [2:30, '2:30']]
-            userTimelist[i].append(yesterday_time(dic[key])) # # ['Серый Гусь', [2:30, '2:30'], '1:00']
+            userTimelist[i].append(yesterday_time(dic[key])) # ['Серый Гусь', [2:30, '2:30'], '1:00']
             print(userTimelist[i])
             structure.append(userTimelist[i])         
             i+=1
     # print("СТРУКТУРА!")
-    # print(structure)   
+    # print(structure)  
+    sort(structure) 
     return structure
+
+# Sort time in a month of active Users
+def sort(structure:list) -> list:
+    #sorted_structure = []
+    for i in range(len(structure)-1):
+        for j in range(len(structure)-i-1):
+            if (structure[j][1][0] < structure[j+1][1][0]):
+                structure[j][0], structure[j+1][0] = structure[j+1][0], structure[j][0]
+                structure[j][1][0], structure[j+1][1][0] = structure[j+1][1][0], structure[j][1][0]
+                structure[j][1][1], structure[j+1][1][1] = structure[j+1][1][1], structure[j][1][1]
+
+            
+    return structure
+
 
 def yesterday_time(activeUser):
     yesterday = datetime.now() - timedelta(days=1)
