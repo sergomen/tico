@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="/static/main.css">
   <script src="https://www.google.com/jsapi"></script>
   <script>
-    
     // var list = {{ list|safe }}
    google.load("visualization", "1", {packages:["corechart"]});
    google.setOnLoadCallback(drawChart);
@@ -23,15 +22,27 @@
             { v: {{list[i][1][0]}}, f: '{{list[i][1][1]}}' + '\n' + 'Вчера: +{{list[i][2]}}' }]
             );
     {% endfor %}
-   
+
+    ticks = []
+    {% for i in range(list|length-3) %}
+    
+    
+    //    ticks.push({v : {{list[i][1][0]}}, f: '{{list[i][1][1]}}'})
+    
+      // var ticks = [{v : {{list[0][1][0]}}, f: '{{list[0][1][1]}}'}]
+      ticks.push({v : {{list[i][1][0]}}, f: '{{list[i][1][1]}}'})
+    
+    {% endfor %}
+  
+     
     var options = {
      title: 'Текущий месяц',
      hAxis: {title: ''},
      vAxis: {title: 'H:Min'},
      width: 1080,
-     
+
      'vAxis': {
-        ticks: [{ v: 720, f: '12:00' }, { v: 1440, f: '24:00' }, { v: 2160, f: '36:00' }, { v: 2880, f: '48:00' }, { v: 3600, f: '60:00'}, { v: 4320, f: '72:00'}, { v: 5040, f: '84:00'}, { v: 5760, f: '96:00'}, { v: 6480, f: '108:00'}, { v: 7200, f: '120:00'}, { v: 7920, f: '132:00'}]
+        ticks: ticks
     }
     };
       
@@ -87,6 +98,7 @@
    }
   </script>
  </head>
+
  <body>
   <h4>{{message}}</h4>
   <div id="oil" style="width: 500px; height: 400px;"></div>
