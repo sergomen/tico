@@ -1,5 +1,6 @@
 from sqlite3 import Row
 from subprocess import list2cmdline
+from typing import List
 from flask import Flask, render_template, request, redirect, session, url_for
 
 import os
@@ -239,8 +240,9 @@ def yesterday_time(activeUser):
         yesterday_time = dateTableYesterdayValue[0][0]
     return yesterday_time
 
+# Sum of User time for all active perion
 #@app.route('/test')
-def read_user_sum():
+def read_user_sum() -> List:
     list2 = []
     dateTableUserSum = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!B4:W4").execute()
     dateTableUserSumValues = dateTableUserSum.get('values',[])
@@ -265,6 +267,13 @@ def read_user_sum():
         i += 1          
         
         list2.extend([[key, sum_v]])
+        
+    for i in range(len(list2)-1):
+        for j in range(len(list2)-i-1):
+            if (list2[j][1] < list2[j+1][1]):
+                list2[j][1], list2[j+1][1] = list2[j+1][1], list2[j][1]
+                list2[j][0], list2[j+1][0] = list2[j+1][0], list2[j][0]
+                
     print(list2)
     # for key in dic:
     #         list3.extend([key])    
