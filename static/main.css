@@ -29,3 +29,44 @@
     left: 550px;
     top: -400px;
 }
+
+.donation {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+}
+
+#a_popup {
+    color: white;
+}
+.popup_vk {
+	border: solid 1px black;
+	padding: 10px;
+	background-color: rgba(245, 164, 124, 0.849);
+	width:400px;
+	margin-top:15%;
+}
+
+.border_radius_class {
+	border-radius: 10px;  
+	-moz-border-radius: 10px; 
+	-webkit-border-radius: 10px;  
+}
+
+.btn_close {
+    padding: 3%;
+    background-color: rgb(249, 72, 11);
+    margin-top: 5%;
+    margin-bottom: 2%;
+    text-align: center;
+    display: block;
+    text-transform: uppercase;
+}
+
+.btn_group {
+	width: 30%;
+}
+
+#vk_groups_popup {
+	margin: 0 auto;
+}

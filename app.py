@@ -7,9 +7,6 @@ import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from datetime import datetime, timedelta
-from nowpayments import NOWPayments
-
-
 
 
 
@@ -236,7 +233,7 @@ def yesterday_time(activeUser):
     dateTableYesterday = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=var_range).execute() 
     dateTableYesterdayValue = dateTableYesterday.get('values',[])
     # Check [] -> if user didn't put time yesterday
-    print(dateTableYesterdayValue)
+    # print(dateTableYesterdayValue)
     if dateTableYesterdayValue == []:
         yesterday_time = "0:00"
     else:

@@ -3,7 +3,7 @@
 <html>
  <head>
   <meta charset="utf-8">
-  <title>Гистограмма</title>
+  <title>Dashboard</title>
   <link rel="stylesheet" href="/static/main.css">
   <script src="https://www.google.com/jsapi"></script>
   <script>
@@ -102,10 +102,45 @@
  <body>
   <h4>{{message}}</h4>
   <div id="oil" style="width: 500px; height: 400px;"></div>
+  
+
+  <div class="donation">
+			<a href="#" onclick="bopen();"><span class="btn_close border_radius_class"><img src="../static/cat-dar.png"></span></a> <br>
+		</div>
+
+		<div id="popup_vk" style="display: none;">
+			<div class="popup_vk border_radius_class"> 
+				<div> 
+					<div><span class="btn_close border_radius_class" style="color: white">Donation</span></div>
+          <h4>Всем привет!</h4>
+          <h4 style="font-family: Times New Roman; color: rgba(22, 17, 17, 0.815)">Я, Серый Гусь, разработчик проекта, в котором люди смогут достигать групповые цели.<br>
+          Моя цель и задача - это сделать рабочий и удобный инструмент, как средство достижения не только групповых, но и личных целей, путем отслеживания прогресса и взаимодействия между людьми с элементами соревнования.<br><br>
+          <div align="center"><img src="../static/group_pic.png"></div><br>
+          На данный момент использование сайтом бесплатное, но в будущем планируется реализовать подписки, с помощью которых пользователь сможет получить дополнительные инструменты, такие как персональная статистика, создание, редактирование и модерирование группы, внесение изменений в личную статистику и сохранение информации в виде популярных форматов.<br> 
+          Сейчас Вы можете поддержать меня криптовалютой (мин. 1$/month). А в ближайщем будущем получить возможность просматривать визуально свою личную статистику в цели.</h4>
+				</div>
+		
+				<div id="vk_groups_popup" align="center"><a href="https://nowpayments.io/donation/greygoose"><img src="../static/dogen.png"></a></div>
+        <br><br>
+          Свои вопросы и пожелания можете писать мне на <a href="mailto:msgusagoose@gmail.com" id="a_popup">почту</a>
+				<a href="#" onclick="bclose();" id="a_popup"> 
+					<span class="btn_close border_radius_class">
+						закрыть
+					</span>
+				</a>
+
+			</div>
+
+		</div>
+
+
   <div style="width: 1000px; height: 800px;">
   <div id="air" style="width: 500px; height: 400px;"></div>
   <div class="pie" id="air2"  style="width: 500px; height: 400px;"></div>
   </div>
   
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bPopup/0.11.0/jquery.bpopup.min.js"></script>
+	<script src="../static/main.js"></script>
  </body>
  </html>
