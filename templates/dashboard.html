@@ -10,6 +10,7 @@
     // var list = {{ list|safe }}
    google.load("visualization", "1", {packages:["corechart"]});
    google.setOnLoadCallback(drawChart);
+   
    function drawChart() {
     var data = google.visualization.arrayToDataTable([
      ['', 'Май'],
@@ -24,12 +25,8 @@
     {% endfor %}
 
     ticks = []
-    {% for i in range(list|length-3) %}
-    
-    
-    //    ticks.push({v : {{list[i][1][0]}}, f: '{{list[i][1][1]}}'})
-    
-      // var ticks = [{v : {{list[0][1][0]}}, f: '{{list[0][1][1]}}'}]
+    {% for i in range(list|length-(list|length/2)|round|int) %}
+
       ticks.push({v : {{list[i][1][0]}}, f: '{{list[i][1][1]}}'})
     
     {% endfor %}
@@ -40,6 +37,7 @@
      hAxis: {title: ''},
      vAxis: {title: 'H:Min'},
      width: 1080,
+     backgroundColor: 'white',
 
      'vAxis': {
         ticks: ticks
@@ -70,6 +68,8 @@
      title: 'Вклад участника',
      is3D: false,
      pieResidueSliceLabel: 'Остальное',
+     backgroundColor: 'white',
+     
     };
     var chart = new google.visualization.PieChart(document.getElementById('air'));
      chart.draw(data, options);
@@ -91,7 +91,8 @@
      title: 'Цель 10.000 часов',
      is3D: true,
      colors: ['#007FFF', '#FF5349'],
-     pieResidueSliceLabel: 'Остальное'
+     pieResidueSliceLabel: 'Остальное',
+     backgroundColor: 'white',
     };
     var chart = new google.visualization.PieChart(document.getElementById('air2'));
      chart.draw(data, options);
@@ -132,13 +133,12 @@
 			</div>
 
 		</div>
-
+  </div>
 
   <div style="width: 1000px; height: 800px;">
-  <div id="air" style="width: 500px; height: 400px;"></div>
-  <div class="pie" id="air2"  style="width: 500px; height: 400px;"></div>
+    <div id="air" style="width: 500px; height: 400px;"></div>
+    <div class="pie" id="air2"  style="width: 500px; height: 400px;"></div>
   </div>
-  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bPopup/0.11.0/jquery.bpopup.min.js"></script>
 	<script src="../static/main.js"></script>

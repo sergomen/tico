@@ -7,6 +7,7 @@ import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from datetime import datetime, timedelta
+from spread import spread_id, users, key
 
 
 
@@ -14,15 +15,15 @@ from datetime import datetime, timedelta
 #
 #
 
-dic = {'Серый Гусь': 'B','Елена': 'C','Varvara': 'D','Balveda': 'E', 'Extranjerita': 'F', 'Алина': 'G', 'Натали': 'H', 'ARTishok': 'I', 'Аня Лу': 'J',
-'Света': 'K', 'The Illuminati Prince': 'L', 'RieBi': 'O', 'Nusya': 'P', 'Transcendence': 'Q', 'Вадим': 'R', 'Salyonaya': 'S', 'Daria': 'T', 'Роман':'U', 'Wonder Woman': 'V', 'Диля Зияхан': 'W'}
+dic = users
 
 # APRIL
-col_from = 143
+col_from = 143 # your also need to change the counter
 col_to = 178
 YEAR_RANGE = "Everyday!A131:A423" #IT'S NOT YEAR, BUT THE BEGINNING
-USER_RANGE = "Everyday!B1:W1"
+USER_RANGE = "Everyday!B1:Y1"
 MONTH_RANGE = "Everyday!A143:A178"
+SUM_USER_RANGE = "Everyday!B4:Y4"
 #
 #
 # ___ END_MANUALLY ___
@@ -34,7 +35,7 @@ basepath = os.path.abspath(".")
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SERVICE_ACCOUNT_FILE = basepath + '/' + 'service_account.json'
 
-SPREADSHEET_ID = '1d85RZSO8zi9U_PdlgQgxL3dQGwRt13GtHno-whBIeSs'
+SPREADSHEET_ID = spread_id
 creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 # creds = ServiceAccountCredentials.from_json_keyfile_name('service_account.json', scope)
 # client = gspread.authorize(creds)
@@ -48,6 +49,7 @@ userTableRow = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=USER_RANGE
 dateTableDay = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=MONTH_RANGE).execute()
 dateTableDayValues = dateTableDay.get('values',[])
 
+dateTableUserSum = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=SUM_USER_RANGE).execute()
 
 values = userTableRow.get('values',[])
 dateTableValues = dateTable.get('values',[])
@@ -64,7 +66,7 @@ current_date = date.strftime("%d/%m/%y")
 # print(wks.acell('B2').value)
 
 app = Flask(__name__)
-app.secret_key = "hello"
+app.secret_key = key
 
 
 @app.route('/')
@@ -185,15 +187,20 @@ def gather_data():
     structure = []
 
     # Define col_from and col_to MANUALLY - APRIL.
-    
+    # key_list = list(dic.keys())
+    # for i in range(len(dic)):
+
     for key in dic:
         userTimelist = [[]]
         i = 0
+        # key = key_list[i]
         row = dic[key]
         monthUser_range = "Everyday!" + str(row) + str(col_from) +  ":" + str(row) + str(col_to) #A109:A142, B109:B142, C109:C142, ...
         read_data_list = read_data(monthUser_range)
         # Passing inactive users
         if read_data_list == []:
+            pass
+        elif key == '':
             pass
         else:
             userTimelist[i].append(key) # ['Серый Гусь']
@@ -201,7 +208,7 @@ def gather_data():
             userTimelist[i].append(yesterday_time(dic[key])) # ['Серый Гусь', [2:30, '2:30'], '1:00']
             print(userTimelist[i])
             structure.append(userTimelist[i])         
-            i+=1
+            # i+=1
     # print("СТРУКТУРА!")
     # print(structure)  
     sort(structure) 
@@ -240,11 +247,11 @@ def yesterday_time(activeUser):
         yesterday_time = dateTableYesterdayValue[0][0]
     return yesterday_time
 
-# Sum of User time for all active perion
+# Sum of User time for all active period
 #@app.route('/test')
 def read_user_sum() -> List:
     list2 = []
-    dateTableUserSum = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Everyday!B4:W4").execute()
+    
     dateTableUserSumValues = dateTableUserSum.get('values',[])
 
     count = 0
@@ -258,16 +265,19 @@ def read_user_sum() -> List:
         t = 0 
         
         if dateTableUserSumValues[0][i] == "":
+            i += 1
+            pass
+        elif key == "":
+            i += 1
             pass
         else:
             for u in dateTableUserSumValues[0][i].split(':'):
                 # print(u)      
                 t = 60 * t + int(u)
-                sum_v = sum_v + t
-        i += 1          
-        
-        list2.extend([[key, sum_v]])
-        
+            sum_v = sum_v + t                          
+            list2.extend([[key, sum_v]])
+        i += 1 
+    print(list2)
     for i in range(len(list2)-1):
         for j in range(len(list2)-i-1):
             if (list2[j][1] < list2[j+1][1]):
@@ -360,3 +370,7 @@ def read_data(var_range):
     else: 
         list = []
     return list
+
+# @app.route('/entry/<string:color>')
+# def change_color(color):
+#     return render_template('user.html', color=color)
