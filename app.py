@@ -172,16 +172,16 @@ def page_not_found(e):
 
 @app.route('/dashboard')
 def dashboard():
-    if "user" in session:
+    # if "user" in session:
         # list = [2022, 20000, 10000]
         # list = read_data()
-        list = gather_data() #read_data()
-        list2 = read_user_sum()
-        cur_sum = current_sum()
+    list = gather_data() #read_data()
+    list2 = read_user_sum()
+    cur_sum = current_sum()
         #list2 = gather_data2()
-        return render_template('dashboard.html', list=list, list2=list2, current_sum=cur_sum)#names_times=zip(name_from_list, time_from_list))#json.dumps(list2))
-    else:
-        return render_template('login.html', message="You're not authorized") 
+    return render_template('dashboard.html', list=list, list2=list2, current_sum=cur_sum)#names_times=zip(name_from_list, time_from_list))#json.dumps(list2))
+    # else:
+    # return render_template('login.html', message="You're not authorized") 
 
 def gather_data():
     structure = []
