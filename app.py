@@ -21,9 +21,9 @@ dic = users
 col_from = 143 # your also need to change the counter
 col_to = 178
 YEAR_RANGE = "Everyday!A131:A423" #IT'S NOT YEAR, BUT THE BEGINNING
-USER_RANGE = "Everyday!B1:Y1"
+USER_RANGE = "Everyday!B1:AA1"
 MONTH_RANGE = "Everyday!A143:A178"
-SUM_USER_RANGE = "Everyday!B4:Y4"
+SUM_USER_RANGE = "Everyday!B4:AA4"
 #
 #
 # ___ END_MANUALLY ___
