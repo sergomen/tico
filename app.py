@@ -18,12 +18,16 @@ from spread import spread_id, users, key
 dic = users
 
 # APRIL
-col_from = 143 # your also need to change the counter
-col_to = 178
+# MAY (143:178)
+# JUNE (179:212)
+# JULY (213:247)
+# AUGUST ()
+col_from = 249 # your also need to change the counter
+col_to = 283
 YEAR_RANGE = "Everyday!A131:A423" #IT'S NOT YEAR, BUT THE BEGINNING
-USER_RANGE = "Everyday!B1:AA1"
-MONTH_RANGE = "Everyday!A143:A178"
-SUM_USER_RANGE = "Everyday!B4:AA4"
+USER_RANGE = "Everyday!B1:AG1"
+MONTH_RANGE = "Everyday!A249:A283"
+SUM_USER_RANGE = "Everyday!B4:AG4"
 #
 #
 # ___ END_MANUALLY ___
